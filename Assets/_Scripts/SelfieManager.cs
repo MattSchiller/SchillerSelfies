@@ -8,6 +8,7 @@ public class SelfieManager : MonoBehaviour {
     public Image webcamImage;
     public Image overlayImage;
     public Button selfieButton;
+    public Slider alphaSlider;
 
     public float overlayAlpha;
 
@@ -15,8 +16,17 @@ public class SelfieManager : MonoBehaviour {
 
     void Start() {
         _SetupSelfieButton();
-        _SetupOverlayImage();
+        _SetupAlphaSlider();
+        _RefreshOverlayImageAlpha();
         _SetupWebcamTexture();
+    }
+
+    void _SetupAlphaSlider() {
+        alphaSlider.value = overlayAlpha;
+        alphaSlider.onValueChanged.AddListener(alpha => {
+            overlayAlpha = alpha;
+            _RefreshOverlayImageAlpha();
+        });
     }
 
     void _SetupSelfieButton() {
@@ -76,7 +86,7 @@ public class SelfieManager : MonoBehaviour {
         return count;
     }
 
-    void _SetupOverlayImage() {
+    void _RefreshOverlayImageAlpha() {
         overlayImage.GetComponent<CanvasRenderer>().SetAlpha(overlayAlpha);
     }
 
