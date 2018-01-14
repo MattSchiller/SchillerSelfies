@@ -16,16 +16,18 @@ public class SelfieManager : MonoBehaviour {
     public float overlayAlpha;
 
     WebCamTexture _webCamTexture;
+    CaptureAndSave _captureAndSave;
 
     void Start() {
-        _SetupSelfieButton();
-        _SetupAlphaSlider();
-        _RefreshOverlayImageAlpha();
+        _captureAndSave = GameObject.FindObjectOfType<CaptureAndSave>();
+        _SetupUI();
         _SetupWebcamTexture();
     }
 
-    void Update() {
-        // transform.rotation = baseRotation * Quaternion.AngleAxis(webcamTexture.videoRotationAngle, Vector3.up);
+    void _SetupUI() {
+        _SetupSelfieButton();
+        _SetupAlphaSlider();
+        _RefreshOverlayImageAlpha();
     }
 
     void _SetupAlphaSlider() {
@@ -45,23 +47,9 @@ public class SelfieManager : MonoBehaviour {
     }
 
     void _SaveSelfie() {
-        string selfieImagePath = _GetSelfieImagePath();
         Texture2D selfieTexture = _GetSelfieTexture();
-
-        _SaveSelfieToFile(selfieImagePath, selfieTexture);
-
+        _captureAndSave.SaveTextureToGallery(selfieTexture);
         Destroy(selfieTexture);
-    }
-
-    void _SaveSelfieToFile(string selfieImagePath, Texture2D selfieTexture) {
-        Debug.Log($"Writing selfie to '{selfieImagePath}'");
-        System.IO.File.WriteAllBytes(selfieImagePath, selfieTexture.EncodeToPNG());
-    }
-
-    string _GetSelfieImagePath(string name = null) {
-        if (name == null)
-            name = _GetSelfieName();
-        return Application.persistentDataPath + "/" + name;
     }
 
     Texture2D _GetSelfieTexture() {
@@ -70,27 +58,6 @@ public class SelfieManager : MonoBehaviour {
         selfieTexture.Apply();
 
         return selfieTexture;
-    }
-
-    string _GetSelfieName() {
-        string date = System.DateTime.Now.ToString("yyyy.MM.dd");
-        string namePrefix = date + "_selfie_";
-        int selfieNumber = _GetNextSelfieNumber(namePrefix);
-
-        return $"{namePrefix}{selfieNumber}.png";
-    }
-
-    int _GetNextSelfieNumber(string namePrefix) {
-        int count = -1;
-        string name, path;
-
-        do {
-            count++;
-            name = $"{namePrefix}{count}.png";
-            path = _GetSelfieImagePath(name);
-        } while (File.Exists(path));
-
-        return count;
     }
 
     void _RefreshOverlayImageAlpha() {
