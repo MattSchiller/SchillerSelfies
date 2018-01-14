@@ -57,7 +57,25 @@ public class SelfieManager : MonoBehaviour {
         selfieTexture.SetPixels(_webCamTexture.GetPixels());
         selfieTexture.Apply();
 
+#if UNITY_IOS && !UNITY_EDITOR
+        return _GetRotatedTextureForIOS(selfieTexture);
+#else
         return selfieTexture;
+#endif
+    }
+
+    /// iOS's front camera returns rotated texture data for whatever reason
+    Texture2D _GetRotatedTextureForIOS(Texture2D selfieTexture) {
+        Texture2D selfieTextureiOS = new Texture2D(_webCamTexture.height, _webCamTexture.width);
+        for (int x = 0; x < _webCamTexture.width; ++x) {
+            for (int y = 0; y < _webCamTexture.height; ++y) {
+                selfieTextureiOS.SetPixel(_webCamTexture.height-y, _webCamTexture.width-x, selfieTexture.GetPixel(x, y));
+            }
+        }
+        selfieTextureiOS.Apply();
+        Destroy(selfieTexture); // Get rid of the old non-rotated one.
+
+        return selfieTextureiOS;
     }
 
     void _RefreshOverlayImageAlpha() {
