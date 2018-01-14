@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class SelfieManager : MonoBehaviour {
     public Image webcamImage;
     public Image webcamImageiOS;
+    public Image webcamImageAndroid;
 
     public Image overlayImage;
 
@@ -57,21 +58,20 @@ public class SelfieManager : MonoBehaviour {
         selfieTexture.SetPixels(_webCamTexture.GetPixels());
         selfieTexture.Apply();
 
-#if UNITY_IOS && !UNITY_EDITOR
-        return _GetRotatedTextureForIOS(selfieTexture);
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
+        return _GetRotatedTextureForMobile(selfieTexture);
 #else
         return selfieTexture;
 #endif
     }
 
-    /// iOS's front camera returns rotated texture data for whatever reason
-    Texture2D _GetRotatedTextureForIOS(Texture2D selfieTexture) {
+    /// Phone's front cameras returns rotated texture data for whatever reason
+    Texture2D _GetRotatedTextureForMobile(Texture2D selfieTexture) {
         Texture2D selfieTextureiOS = new Texture2D(_webCamTexture.height, _webCamTexture.width);
-        for (int x = 0; x < _webCamTexture.width; ++x) {
-            for (int y = 0; y < _webCamTexture.height; ++y) {
-                selfieTextureiOS.SetPixel(_webCamTexture.height-y, _webCamTexture.width-x, selfieTexture.GetPixel(x, y));
-            }
-        }
+        for (int x = 0; x < _webCamTexture.width; ++x)
+            for (int y = 0; y < _webCamTexture.height; ++y)
+                selfieTextureiOS.SetPixel(_webCamTexture.height - y, _webCamTexture.width - x, selfieTexture.GetPixel(x, y));
+
         selfieTextureiOS.Apply();
         Destroy(selfieTexture); // Get rid of the old non-rotated one.
 
@@ -93,14 +93,25 @@ public class SelfieManager : MonoBehaviour {
         _webCamTexture.Play();
     }
 
-    void _SetWebcamImageTexture(Texture webcamTexture) {
+    void _SetWebcamImageTexture(Texture webCamTexture) {
+        _HideAllWebcamImages();
+
 #if UNITY_IOS && !UNITY_EDITOR
-        webcamImage.gameObject.SetActive(false);
-        webcamImageiOS.material.mainTexture = _webCamTexture;
+        webcamImageiOS.gameObject.SetActive(true);
+        webcamImageiOS.material.mainTexture = webCamTexture;
+#elif UNITY_ANDROID && !UNITY_EDITOR
+        webcamImageAndroid.gameObject.SetActive(true);
+        webcamImageAndroid.material.mainTexture = webCamTexture;
 #else
-        webcamImageiOS.gameObject.SetActive(false);
-        webcamImage.material.mainTexture = _webCamTexture;
+        webcamImage.gameObject.SetActive(true);
+        webcamImage.material.mainTexture = webCamTexture;
 #endif
+    }
+
+    void _HideAllWebcamImages() {
+        webcamImage.gameObject.SetActive(false);
+        webcamImageiOS.gameObject.SetActive(false);
+        webcamImageAndroid.gameObject.SetActive(false);
     }
 
     string _GetFrontFacingCameraName() {
