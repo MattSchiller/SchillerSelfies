@@ -6,7 +6,10 @@ using UnityEngine.UI;
 
 public class SelfieManager : MonoBehaviour {
     public Image webcamImage;
+    public Image webcamImageiOS;
+
     public Image overlayImage;
+
     public Button selfieButton;
     public Slider alphaSlider;
 
@@ -19,6 +22,10 @@ public class SelfieManager : MonoBehaviour {
         _SetupAlphaSlider();
         _RefreshOverlayImageAlpha();
         _SetupWebcamTexture();
+    }
+
+    void Update() {
+        // transform.rotation = baseRotation * Quaternion.AngleAxis(webcamTexture.videoRotationAngle, Vector3.up);
     }
 
     void _SetupAlphaSlider() {
@@ -97,8 +104,18 @@ public class SelfieManager : MonoBehaviour {
             return;
         }
 
-        webcamImage.material.mainTexture = _webCamTexture;
+        _SetWebcamImageTexture(_webCamTexture);
         _webCamTexture.Play();
+    }
+
+    void _SetWebcamImageTexture(Texture webcamTexture) {
+#if UNITY_IOS && !UNITY_EDITOR
+        webcamImage.gameObject.SetActive(false);
+        webcamImageiOS.material.mainTexture = _webCamTexture;
+#else
+        webcamImageiOS.gameObject.SetActive(false);
+        webcamImage.material.mainTexture = _webCamTexture;
+#endif
     }
 
     string _GetFrontFacingCameraName() {
