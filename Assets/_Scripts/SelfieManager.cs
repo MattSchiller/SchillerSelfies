@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class SelfieManager : MonoBehaviour
 {
@@ -137,15 +138,17 @@ public class SelfieManager : MonoBehaviour
 
     WebCamTexture _GetWebcamTexture()
     {
-        Rect webcamImageRect = webcamImage.rectTransform.rect;
         string frontFacingCameraName = _GetFrontFacingCameraName();
 
         if (!string.IsNullOrEmpty(frontFacingCameraName))
-            return new WebCamTexture(frontFacingCameraName, (int)webcamImageRect.width, (int)webcamImageRect.height);
+            return new WebCamTexture(
+                frontFacingCameraName,
+                (int)((RectTransform)overlayImage.transform).rect.width,
+                (int)((RectTransform)overlayImage.transform).rect.height);
         else
         {
             Debug.LogError("Couldn't find front facing camera!");
-            return new WebCamTexture((int)webcamImageRect.width, (int)webcamImageRect.height);
+            return new WebCamTexture(Screen.width, Screen.height);
         }
     }
 }
