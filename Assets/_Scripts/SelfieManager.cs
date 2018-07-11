@@ -66,6 +66,7 @@ public class SelfieManager : MonoBehaviour
 
     Texture2D _GetSelfieTexture()
     {
+        Debug.Log("~~~");
         Texture2D selfieTexture = new Texture2D(_webCamTexture.width, _webCamTexture.height);
         selfieTexture.SetPixels(_webCamTexture.GetPixels());
         selfieTexture.Apply();
@@ -83,7 +84,7 @@ public class SelfieManager : MonoBehaviour
         Texture2D selfieTextureMobile = new Texture2D(_webCamTexture.height, _webCamTexture.width);
         for (int x = 0; x < _webCamTexture.width; ++x)
             for (int y = 0; y < _webCamTexture.height; ++y)
-                selfieTextureMobile.SetPixel(_webCamTexture.height - y, _webCamTexture.width - x, selfieTexture.GetPixel(x, y));
+                selfieTextureMobile.SetPixel(y, x, selfieTexture.GetPixel(selfieTexture.width - x, selfieTexture.height - y));
 
         selfieTextureMobile.Apply();
         Destroy(selfieTexture); // Get rid of the old non-rotated one.
