@@ -28,6 +28,9 @@ public class SelfieManager : MonoBehaviour
 
     void _SetupUI()
     {
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+        Screen.fullScreen = false;
+#endif
         _SetupSelfieButton();
         _SetupAlphaSlider();
         _RefreshOverlayImageAlpha();
