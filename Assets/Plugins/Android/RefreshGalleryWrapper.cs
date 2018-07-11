@@ -17,7 +17,7 @@ public class RefreshGalleryWrapper : MonoBehaviour {
 		if (captureAndSave != null) {
 			captureAndSaveGameObjectName =	captureAndSave.gameObject.name;
 		}
-		
+
 		AndroidJavaClass javaClass = new AndroidJavaClass("com.astricstore.androidutil.AndroidGallery");
 		javaClass.CallStatic("SetGalleryPath",captureAndSaveGameObjectName);
 	}

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SelfieManager : MonoBehaviour {
+public class SelfieManager : MonoBehaviour
+{
     public Image webcamImage;
-    public Image webcamImageiOS;
     public Image webcamImageAndroid;
 
     public Image overlayImage;
@@ -19,41 +19,49 @@ public class SelfieManager : MonoBehaviour {
     WebCamTexture _webCamTexture;
     CaptureAndSave _captureAndSave;
 
-    void Start() {
+    void Start()
+    {
         _captureAndSave = GameObject.FindObjectOfType<CaptureAndSave>();
         _SetupUI();
         _SetupWebcamTexture();
     }
 
-    void _SetupUI() {
+    void _SetupUI()
+    {
         _SetupSelfieButton();
         _SetupAlphaSlider();
         _RefreshOverlayImageAlpha();
     }
 
-    void _SetupAlphaSlider() {
+    void _SetupAlphaSlider()
+    {
         alphaSlider.value = overlayAlpha;
-        alphaSlider.onValueChanged.AddListener(alpha => {
+        alphaSlider.onValueChanged.AddListener(alpha =>
+        {
             overlayAlpha = alpha;
             _RefreshOverlayImageAlpha();
         });
     }
 
-    void _SetupSelfieButton() {
+    void _SetupSelfieButton()
+    {
         selfieButton.onClick.AddListener(_OnSelfieButtonPressed);
     }
 
-    void _OnSelfieButtonPressed() {
+    void _OnSelfieButtonPressed()
+    {
         _SaveSelfie();
     }
 
-    void _SaveSelfie() {
+    void _SaveSelfie()
+    {
         Texture2D selfieTexture = _GetSelfieTexture();
         _captureAndSave.SaveTextureToGallery(selfieTexture);
         Destroy(selfieTexture);
     }
 
-    Texture2D _GetSelfieTexture() {
+    Texture2D _GetSelfieTexture()
+    {
         Texture2D selfieTexture = new Texture2D(_webCamTexture.width, _webCamTexture.height);
         selfieTexture.SetPixels(_webCamTexture.GetPixels());
         selfieTexture.Apply();
@@ -66,25 +74,29 @@ public class SelfieManager : MonoBehaviour {
     }
 
     /// Phone's front cameras returns rotated texture data for whatever reason
-    Texture2D _GetRotatedTextureForMobile(Texture2D selfieTexture) {
-        Texture2D selfieTextureiOS = new Texture2D(_webCamTexture.height, _webCamTexture.width);
+    Texture2D _GetRotatedTextureForMobile(Texture2D selfieTexture)
+    {
+        Texture2D selfieTextureMobile = new Texture2D(_webCamTexture.height, _webCamTexture.width);
         for (int x = 0; x < _webCamTexture.width; ++x)
             for (int y = 0; y < _webCamTexture.height; ++y)
-                selfieTextureiOS.SetPixel(_webCamTexture.height - y, _webCamTexture.width - x, selfieTexture.GetPixel(x, y));
+                selfieTextureMobile.SetPixel(_webCamTexture.height - y, _webCamTexture.width - x, selfieTexture.GetPixel(x, y));
 
-        selfieTextureiOS.Apply();
+        selfieTextureMobile.Apply();
         Destroy(selfieTexture); // Get rid of the old non-rotated one.
 
-        return selfieTextureiOS;
+        return selfieTextureMobile;
     }
 
-    void _RefreshOverlayImageAlpha() {
+    void _RefreshOverlayImageAlpha()
+    {
         overlayImage.GetComponent<CanvasRenderer>().SetAlpha(overlayAlpha);
     }
 
-    void _SetupWebcamTexture() {
+    void _SetupWebcamTexture()
+    {
         _webCamTexture = _GetWebcamTexture();
-        if (_webCamTexture == null) {
+        if (_webCamTexture == null)
+        {
             Debug.LogError("Couldn't find device camera!");
             return;
         }
@@ -93,13 +105,11 @@ public class SelfieManager : MonoBehaviour {
         _webCamTexture.Play();
     }
 
-    void _SetWebcamImageTexture(Texture webCamTexture) {
+    void _SetWebcamImageTexture(Texture webCamTexture)
+    {
         _HideAllWebcamImages();
 
-#if UNITY_IOS && !UNITY_EDITOR
-        webcamImageiOS.gameObject.SetActive(true);
-        webcamImageiOS.material.mainTexture = webCamTexture;
-#elif UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
         webcamImageAndroid.gameObject.SetActive(true);
         webcamImageAndroid.material.mainTexture = webCamTexture;
 #else
@@ -108,28 +118,31 @@ public class SelfieManager : MonoBehaviour {
 #endif
     }
 
-    void _HideAllWebcamImages() {
+    void _HideAllWebcamImages()
+    {
         webcamImage.gameObject.SetActive(false);
-        webcamImageiOS.gameObject.SetActive(false);
         webcamImageAndroid.gameObject.SetActive(false);
     }
 
-    string _GetFrontFacingCameraName() {
+    string _GetFrontFacingCameraName()
+    {
         foreach (WebCamDevice device in WebCamTexture.devices)
             if (device.isFrontFacing)
                 return device.name;
         return null;
     }
 
-    WebCamTexture _GetWebcamTexture() {
+    WebCamTexture _GetWebcamTexture()
+    {
         Rect webcamImageRect = webcamImage.rectTransform.rect;
         string frontFacingCameraName = _GetFrontFacingCameraName();
 
         if (!string.IsNullOrEmpty(frontFacingCameraName))
-            return new WebCamTexture(frontFacingCameraName, (int) webcamImageRect.width, (int) webcamImageRect.height);
-        else {
+            return new WebCamTexture(frontFacingCameraName, (int)webcamImageRect.width, (int)webcamImageRect.height);
+        else
+        {
             Debug.LogError("Couldn't find front facing camera!");
-            return new WebCamTexture((int) webcamImageRect.width, (int) webcamImageRect.height);
+            return new WebCamTexture((int)webcamImageRect.width, (int)webcamImageRect.height);
         }
     }
 }
