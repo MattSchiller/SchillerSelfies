@@ -21,6 +21,9 @@ public class SelfieManager : MonoBehaviour
 
     void Start()
     {
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+        Screen.fullScreen = false;
+#endif
         _captureAndSave = GameObject.FindObjectOfType<CaptureAndSave>();
         _SetupUI();
         _SetupWebcamTexture();
@@ -28,9 +31,6 @@ public class SelfieManager : MonoBehaviour
 
     void _SetupUI()
     {
-#if (UNITY_ANDROID && !UNITY_EDITOR)
-        Screen.fullScreen = false;
-#endif
         _SetupSelfieButton();
         _SetupAlphaSlider();
         _RefreshOverlayImageAlpha();
