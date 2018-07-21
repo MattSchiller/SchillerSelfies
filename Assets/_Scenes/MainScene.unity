@@ -1132,6 +1132,7 @@ GameObject:
   - component: {fileID: 1897426392}
   - component: {fileID: 1897426394}
   - component: {fileID: 1897426393}
+  - component: {fileID: 1897426395}
   m_Layer: 5
   m_Name: WebcamImage
   m_TagString: Untagged
@@ -1191,6 +1192,19 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1897426391}
   m_CullTransparentMesh: 0
+--- !u!114 &1897426395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1897426391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1254083943, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 0
+  m_AspectRatio: 0.5217391
 --- !u!1 &2000832672
 GameObject:
   m_ObjectHideFlags: 0
@@ -1219,21 +1233,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   webcamImage: {fileID: 1897426393}
+  webcamFitter: {fileID: 1897426395}
   webcamImageAndroid: {fileID: 145359367}
+  webcamAndroidFitter: {fileID: 145359369}
   overlayImage: {fileID: 1281034470}
   selfieButton: {fileID: 1667713794}
   alphaSlider: {fileID: 1494621753}
   overlayAlpha: 0.4
---- !u!4 &2000832674
-Transform:
+--- !u!224 &2000832674
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2000832672}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 154.7711, y: 281.8254, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 154.7711, y: 281.8254}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
