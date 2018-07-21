@@ -15,6 +15,9 @@ public class SelfieManager : MonoBehaviour
 
     public Image overlayImage;
 
+    public RawImage cameraImage;
+    public AspectRatioFitter rawImageFitter;
+
     public Button selfieButton;
     public Slider alphaSlider;
 
@@ -35,6 +38,13 @@ public class SelfieManager : MonoBehaviour
         float ratio = (float)_webCamTexture.width / (float)_webCamTexture.height;
         webcamFitter.aspectRatio = ratio;
         webcamAndroidFitter.aspectRatio = ratio;
+        rawImageFitter.aspectRatio = ratio;
+
+        float scaleY = _webCamTexture.videoVerticallyMirrored ? 1f : -1f;
+        cameraImage.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
+
+        int orientation = -_webCamTexture.videoRotationAngle;
+        cameraImage.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);
 
     }
 
@@ -57,6 +67,7 @@ public class SelfieManager : MonoBehaviour
 
         _SetWebcamImageTexture(_webCamTexture);
         _webCamTexture.Play();
+        cameraImage.texture = _webCamTexture;
 
         _webcamAvailable = true;
     }
@@ -90,10 +101,10 @@ public class SelfieManager : MonoBehaviour
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         webcamImageAndroid.gameObject.SetActive(true);
-        webcamImageAndroid.material.mainTexture = webCamTexture;
+        // webcamImageAndroid.material.mainTexture = webCamTexture;
 #else
         webcamImage.gameObject.SetActive(true);
-        webcamImage.material.mainTexture = webCamTexture;
+        // webcamImage.material.mainTexture = webCamTexture;
 #endif
     }
 
