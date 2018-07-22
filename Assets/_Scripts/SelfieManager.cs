@@ -48,8 +48,8 @@ public class SelfieManager : MonoBehaviour {
         int orientation = -_webCamTexture.videoRotationAngle;
 
         cameraImage.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);
-        rawImageFitter.aspectRatio = ratio;
-        // cameraImage.rectTransform.sizeDelta = new Vector2(currentHeight, currentWidth);
+        rawImageFitter.aspectRatio = 1 / ratio;
+        cameraImage.rectTransform.sizeDelta = new Vector2(currentHeight, currentWidth);
 
     }
 
