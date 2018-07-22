@@ -24,7 +24,7 @@ public class SelfieManager : MonoBehaviour {
     CaptureAndSave _captureAndSave;
 
     bool _webcamAvailable;
-    float ratio = 0.5346535f; // 1836f / 3264f;
+    float ratio = 0.5625f; // 1836f / 3264f; float ratio = 0.5346535f
 
     void Update() {
         if (_webcamAvailable) {
