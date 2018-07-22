@@ -24,13 +24,11 @@ public class SelfieManager : MonoBehaviour {
     CaptureAndSave _captureAndSave;
 
     bool _webcamAvailable;
-    float ratio = 0.52173913043f; //0.5625f; // 1836f / 3264f; float ratio = 0.5346535f
+    float ratio = 0.5625f; // 0.52173913043f; // 1836f / 3264f; float ratio = 0.5346535f
 
     void Update() {
         if (_webcamAvailable) {
             _UpdateAspectRatioFitters();
-            Debug.Log("Ratio: " + rawImageFitter.aspectRatio);
-            Debug.Log("Twoio: " + (float) _webCamTexture.width / (float) _webCamTexture.height);
         }
     }
 
@@ -41,15 +39,15 @@ public class SelfieManager : MonoBehaviour {
         float scaleY = _webCamTexture.videoVerticallyMirrored ? -1f : 1f;
         cameraImage.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
 
-        int currentWidth = (int) overlayImage.rectTransform.rect.height;
-        int currentHeight = (int) overlayImage.rectTransform.rect.width;
+        int transparencyWidth = (int) overlayImage.rectTransform.rect.height;
+        int transparencyHeight = (int) overlayImage.rectTransform.rect.width;
 
         // Need to rotate the camera not the texture
         int orientation = -_webCamTexture.videoRotationAngle;
 
         cameraImage.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);
         rawImageFitter.aspectRatio = 1 / ratio;
-        cameraImage.rectTransform.sizeDelta = new Vector2(currentHeight, currentWidth);
+        cameraImage.rectTransform.sizeDelta = new Vector2(transparencyHeight, transparencyWidth);
 
     }
 
