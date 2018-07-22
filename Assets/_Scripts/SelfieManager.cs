@@ -47,7 +47,9 @@ public class SelfieManager : MonoBehaviour {
 
         cameraImage.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);
         rawImageFitter.aspectRatio = 1 / ratio;
-        cameraImage.rectTransform.sizeDelta = new Vector2(transparencyHeight, transparencyWidth);
+
+        float sizeDeltaScaler = 1.27f;
+        cameraImage.rectTransform.sizeDelta = new Vector2(transparencyHeight / sizeDeltaScaler, transparencyWidth / sizeDeltaScaler);
 
     }
 
