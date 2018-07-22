@@ -6,12 +6,9 @@ using UnityEngine.UI;
 using System.Linq;
 using System;
 
-public class SelfieManager : MonoBehaviour
-{
+public class SelfieManager : MonoBehaviour {
     public Image webcamImage;
-    public AspectRatioFitter webcamFitter;
     public Image webcamImageAndroid;
-    public AspectRatioFitter webcamAndroidFitter;
 
     public Image overlayImage;
 
@@ -27,24 +24,32 @@ public class SelfieManager : MonoBehaviour
     CaptureAndSave _captureAndSave;
 
     bool _webcamAvailable;
+    float ratio = 0.5346535f; // 1836f / 3264f;
 
     void Update() {
         if (_webcamAvailable) {
             _UpdateAspectRatioFitters();
+            Debug.Log("Ratio: " + rawImageFitter.aspectRatio);
+            Debug.Log("Twoio: " + (float) _webCamTexture.width / (float) _webCamTexture.height);
         }
     }
 
     void _UpdateAspectRatioFitters() {
-        float ratio = (float)_webCamTexture.width / (float)_webCamTexture.height;
-        webcamFitter.aspectRatio = ratio;
-        webcamAndroidFitter.aspectRatio = ratio;
-        rawImageFitter.aspectRatio = ratio;
+        //(float)Screen.width / (float)Screen.height;
+        // rawImageFitter.aspectRatio = ratio;
 
-        float scaleY = _webCamTexture.videoVerticallyMirrored ? 1f : -1f;
+        float scaleY = _webCamTexture.videoVerticallyMirrored ? -1f : 1f;
         cameraImage.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
 
+        int currentWidth = _webCamTexture.width;
+        int currentHeight = _webCamTexture.height;
+
+        // Need to rotate the camera not the texture
         int orientation = -_webCamTexture.videoRotationAngle;
+
         cameraImage.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);
+        rawImageFitter.aspectRatio = ratio;
+        // cameraImage.rectTransform.sizeDelta = new Vector2(currentHeight, currentWidth);
 
     }
 
@@ -78,10 +83,8 @@ public class SelfieManager : MonoBehaviour
         if (!string.IsNullOrEmpty(frontFacingCameraName))
             return new WebCamTexture(
                 frontFacingCameraName,
-                Screen.width,
-                Screen.height
-                // (int)((RectTransform)overlayImage.transform).rect.width,
-                // (int)((RectTransform)overlayImage.transform).rect.height
+                (int) ((RectTransform) overlayImage.transform).rect.width,
+                (int) ((RectTransform) overlayImage.transform).rect.height
                 );
         else {
             Debug.LogError("Couldn't find front facing camera!");
@@ -135,7 +138,9 @@ public class SelfieManager : MonoBehaviour
         selfieButton.onClick.AddListener(_OnSelfieButtonPressed);
     }
 
-    void _OnSelfieButtonPressed() => _SaveSelfie();
+    void _OnSelfieButtonPressed() {
+        _SaveSelfie();
+    }
 
     void _SaveSelfie() {
         Texture2D selfieTexture = _GetSelfieTextureForSave();
