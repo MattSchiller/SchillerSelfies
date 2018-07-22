@@ -24,7 +24,7 @@ public class SelfieManager : MonoBehaviour {
     CaptureAndSave _captureAndSave;
 
     bool _webcamAvailable;
-    float ratio = 0.5625f; // 1836f / 3264f; float ratio = 0.5346535f
+    float ratio = 0.52173913043f; //0.5625f; // 1836f / 3264f; float ratio = 0.5346535f
 
     void Update() {
         if (_webcamAvailable) {
@@ -41,8 +41,8 @@ public class SelfieManager : MonoBehaviour {
         float scaleY = _webCamTexture.videoVerticallyMirrored ? -1f : 1f;
         cameraImage.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
 
-        int currentWidth = _webCamTexture.width;
-        int currentHeight = _webCamTexture.height;
+        int currentWidth = (int) overlayImage.rectTransform.rect.height;
+        int currentHeight = (int) overlayImage.rectTransform.rect.width;
 
         // Need to rotate the camera not the texture
         int orientation = -_webCamTexture.videoRotationAngle;
