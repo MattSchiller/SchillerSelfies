@@ -7,9 +7,6 @@ using System.Linq;
 using System;
 
 public class SelfieManager : MonoBehaviour {
-    public Image webcamImage;
-    public Image webcamImageAndroid;
-
     public Image overlayImage;
 
     public RawImage cameraImage;
@@ -66,22 +63,10 @@ public class SelfieManager : MonoBehaviour {
             return;
         }
 
-        _SetWebcamImageTexture(_webCamTexture);
         _webCamTexture.Play();
         cameraImage.texture = _webCamTexture;
 
         _webcamAvailable = true;
-    }
-
-    void _SetWebcamImageTexture(Texture webCamTexture) {
-        _HideAllWebcamImages();
-        Image
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-        webcamImageAndroid.gameObject.SetActive(true);
-#else
-        webcamImage.gameObject.SetActive(true);
-#endif
     }
 
     WebCamTexture _GetWebcamTexture() {
@@ -106,11 +91,6 @@ public class SelfieManager : MonoBehaviour {
         return null;
     }
 
-    void _HideAllWebcamImages() {
-        webcamImage.gameObject.SetActive(false);
-        webcamImageAndroid.gameObject.SetActive(false);
-    }
-
     void _SetupUI() {
         _SetupSelfieButton();
         _SetupAlphaSlider();
@@ -130,41 +110,43 @@ public class SelfieManager : MonoBehaviour {
     }
 
     void _SetupSelfieButton() {
-        selfieButton.onClick.AddListener(_OnSelfieButtonPressed);
+        Debug.Log("Setting Up Button");
+        selfieButton.GetComponent<Button>().onClick.AddListener(_OnSelfieButtonPressed);
     }
 
     void _OnSelfieButtonPressed() {
-        _SaveSelfie();
+        Debug.Log("Capturing");
+        // _SaveSelfie();
+        Debug.Log("Captured");
     }
 
     void _SaveSelfie() {
-        Texture2D selfieTexture = _GetSelfieTextureForSave();
-        _captureAndSave.SaveTextureToGallery(selfieTexture);
-        Destroy(selfieTexture);
+        // Texture2D selfieTexture = _GetSelfieTextureForSave();
+        _captureAndSave.SaveTextureToGallery(cameraImage.texture as Texture2D);
     }
 
-    Texture2D _GetSelfieTextureForSave() {
-        Texture2D selfieTexture = new Texture2D(_webCamTexture.width, _webCamTexture.height);
-        selfieTexture.SetPixels(_webCamTexture.GetPixels());
-        selfieTexture.Apply();
+    //     Texture2D _GetSelfieTextureForSave() {
+    //         Texture2D selfieTexture = new Texture2D(_webCamTexture.width, _webCamTexture.height);
+    //         selfieTexture.SetPixels(_webCamTexture.GetPixels());
+    //         selfieTexture.Apply();
 
-#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
-        return _GetRotatedTextureForMobile(selfieTexture);
-#else
-        return selfieTexture;
-#endif
-    }
+    // #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
+    //         return _GetRotatedTextureForMobile(selfieTexture);
+    // #else
+    //         return selfieTexture;
+    // #endif
+    //     }
 
-    /// Phone's front cameras returns rotated texture data for whatever reason
-    Texture2D _GetRotatedTextureForMobile(Texture2D selfieTexture) {
-        Texture2D selfieTextureMobile = new Texture2D(_webCamTexture.height, _webCamTexture.width);
-        for (int x = 0; x < _webCamTexture.width; ++x)
-            for (int y = 0; y < _webCamTexture.height; ++y)
-                selfieTextureMobile.SetPixel(y, x, selfieTexture.GetPixel(selfieTexture.width - x, selfieTexture.height - y));
+    // /// Phone's front cameras returns rotated texture data for whatever reason
+    // Texture2D _GetRotatedTextureForMobile(Texture2D selfieTexture) {
+    //     Texture2D selfieTextureMobile = new Texture2D(_webCamTexture.height, _webCamTexture.width);
+    //     for (int x = 0; x < _webCamTexture.width; ++x)
+    //         for (int y = 0; y < _webCamTexture.height; ++y)
+    //             selfieTextureMobile.SetPixel(y, x, selfieTexture.GetPixel(selfieTexture.width - x, selfieTexture.height - y));
 
-        selfieTextureMobile.Apply();
-        Destroy(selfieTexture); // Get rid of the old non-rotated one.
+    //     selfieTextureMobile.Apply();
+    //     Destroy(selfieTexture); // Get rid of the old non-rotated one.
 
-        return selfieTextureMobile;
-    }
+    //     return selfieTextureMobile;
+    // }
 }
