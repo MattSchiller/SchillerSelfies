@@ -123,7 +123,6 @@ public class SelfieManager : MonoBehaviour {
     void _SaveSelfie() {
         Texture2D selfieTexture = _GetSelfieTextureForSave();
         _captureAndSave.SaveTextureToGallery(selfieTexture);
-        // _captureAndSave.SaveTextureAtPath(selfieTexture, "/users/schiller/Pictures/TEST.png");
     }
 
     Texture2D _GetSelfieTextureForSave() {
