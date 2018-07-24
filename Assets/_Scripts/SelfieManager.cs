@@ -24,33 +24,29 @@ public class SelfieManager : MonoBehaviour {
     CaptureAndSave _captureAndSave;
 
     bool _webcamAvailable;
-    float ratio = 0.5625f; // 0.52173913043f; // 1836f / 3264f; float ratio = 0.5346535f
+    float ratio = 1f / 0.5625f; // 0.52173913043f; // 1836f / 3264f; float ratio = 0.5346535f
+    float sizeDeltaScaler = 1.27f;
 
     void Update() {
         if (_webcamAvailable) {
-            _UpdateAspectRatioFitters();
+            _UpdateCameraOverlayAspectRatio();
+            _UpdateCameraOverlaySize();
         }
     }
 
-    void _UpdateAspectRatioFitters() {
-        //(float)Screen.width / (float)Screen.height;
-        // rawImageFitter.aspectRatio = ratio;
-
+    void _UpdateCameraOverlayAspectRatio() {
         float scaleY = _webCamTexture.videoVerticallyMirrored ? -1f : 1f;
         cameraImage.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
 
+        int orientation = -_webCamTexture.videoRotationAngle;
+        cameraImage.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);
+    }
+
+    void _UpdateCameraOverlaySize() {
         int transparencyWidth = (int) overlayImage.rectTransform.rect.height;
         int transparencyHeight = (int) overlayImage.rectTransform.rect.width;
-
-        // Need to rotate the camera not the texture
-        int orientation = -_webCamTexture.videoRotationAngle;
-
-        cameraImage.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);
-        rawImageFitter.aspectRatio = 1 / ratio;
-
-        float sizeDeltaScaler = 1.27f;
+        rawImageFitter.aspectRatio = ratio;
         cameraImage.rectTransform.sizeDelta = new Vector2(transparencyHeight / sizeDeltaScaler, transparencyWidth / sizeDeltaScaler);
-
     }
 
     void Start() {
@@ -77,6 +73,17 @@ public class SelfieManager : MonoBehaviour {
         _webcamAvailable = true;
     }
 
+    void _SetWebcamImageTexture(Texture webCamTexture) {
+        _HideAllWebcamImages();
+        Image
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+        webcamImageAndroid.gameObject.SetActive(true);
+#else
+        webcamImage.gameObject.SetActive(true);
+#endif
+    }
+
     WebCamTexture _GetWebcamTexture() {
         string frontFacingCameraName = _GetFrontFacingCameraName();
 
@@ -97,18 +104,6 @@ public class SelfieManager : MonoBehaviour {
             if (device.isFrontFacing)
                 return device.name;
         return null;
-    }
-
-    void _SetWebcamImageTexture(Texture webCamTexture) {
-        _HideAllWebcamImages();
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-        webcamImageAndroid.gameObject.SetActive(true);
-        // webcamImageAndroid.material.mainTexture = webCamTexture;
-#else
-        webcamImage.gameObject.SetActive(true);
-        // webcamImage.material.mainTexture = webCamTexture;
-#endif
     }
 
     void _HideAllWebcamImages() {
